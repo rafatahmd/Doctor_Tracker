@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -26,6 +25,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  DataTable,
+  DataTableEmptyState,
+  dataTableActionsTriggerClassName,
+  dataTableBodyRowClassName,
+  dataTableCellClassName,
+  dataTableHeadClassName,
+  dataTableHeaderRowClassName,
+  dataTableHighlightBadgeClassName,
+} from '@/components/ui/data-table-shell';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Patient } from '@/hooks/usePatients';
 import { format } from 'date-fns';
@@ -41,6 +50,57 @@ interface PatientTableProps {
   canMutate?: boolean;
 }
 
+function PatientTableSkeleton({ canMutate }: { canMutate: boolean }) {
+  return (
+    <DataTable>
+        <TableHeader>
+          <TableRow className={dataTableHeaderRowClassName}>
+            <TableHead className={dataTableHeadClassName}>Name</TableHead>
+            <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Age</TableHead>
+            <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Gender</TableHead>
+            <TableHead className={dataTableHeadClassName}>Condition</TableHead>
+            <TableHead className={`${dataTableHeadClassName} hidden md:table-cell`}>Doctor</TableHead>
+            <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Phone</TableHead>
+            <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Created</TableHead>
+            {canMutate && <TableHead className={`${dataTableHeadClassName} w-12`} />}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...Array(5)].map((_, i) => (
+            <TableRow key={i} className={dataTableBodyRowClassName}>
+              <TableCell className={dataTableCellClassName}>
+                <Skeleton className="h-4 w-32" />
+              </TableCell>
+              <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}>
+                <Skeleton className="h-4 w-12" />
+              </TableCell>
+              <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}>
+                <Skeleton className="h-5 w-16" />
+              </TableCell>
+              <TableCell className={dataTableCellClassName}>
+                <Skeleton className="h-5 w-24" />
+              </TableCell>
+              <TableCell className={`${dataTableCellClassName} hidden md:table-cell`}>
+                <Skeleton className="h-4 w-32" />
+              </TableCell>
+              <TableCell className={`${dataTableCellClassName} hidden lg:table-cell`}>
+                <Skeleton className="h-4 w-28" />
+              </TableCell>
+              <TableCell className={`${dataTableCellClassName} hidden lg:table-cell`}>
+                <Skeleton className="h-4 w-20" />
+              </TableCell>
+              {canMutate && (
+                <TableCell className={dataTableCellClassName}>
+                  <Skeleton className="size-8 rounded-lg" />
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+    </DataTable>
+  );
+}
+
 export function PatientTable({
   patients,
   isLoading,
@@ -52,105 +112,76 @@ export function PatientTable({
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="hidden sm:table-cell">Age</TableHead>
-              <TableHead className="hidden sm:table-cell">Gender</TableHead>
-              <TableHead>Condition</TableHead>
-              <TableHead className="hidden md:table-cell">Doctor</TableHead>
-              <TableHead className="hidden lg:table-cell">Phone</TableHead>
-              <TableHead className="hidden lg:table-cell">Created</TableHead>
-              {canMutate && <TableHead className="w-[50px]"></TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {[...Array(5)].map((_, i) => (
-              <TableRow key={i}>
-                <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-12" /></TableCell>
-                <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-16" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-32" /></TableCell>
-                <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-28" /></TableCell>
-                <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-20" /></TableCell>
-                {canMutate && <TableCell><Skeleton className="h-8 w-8" /></TableCell>}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    );
+    return <PatientTableSkeleton canMutate={canMutate} />;
   }
 
   if (patients.length === 0) {
-    return (
-      <div className="rounded-md border">
-        <div className="flex flex-col items-center justify-center py-16">
-          <Users className="h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No patients found</p>
-        </div>
-      </div>
-    );
+    return <DataTableEmptyState icon={Users} title="No patients found" />;
   }
 
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
+      <DataTable>
           <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="hidden sm:table-cell">Age</TableHead>
-              <TableHead className="hidden sm:table-cell">Gender</TableHead>
-              <TableHead>Condition</TableHead>
-              <TableHead className="hidden md:table-cell">Doctor</TableHead>
-              <TableHead className="hidden lg:table-cell">Phone</TableHead>
-              <TableHead className="hidden lg:table-cell">Created</TableHead>
-              {canMutate && <TableHead className="w-[50px]"></TableHead>}
+            <TableRow className={dataTableHeaderRowClassName}>
+              <TableHead className={dataTableHeadClassName}>Name</TableHead>
+              <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Age</TableHead>
+              <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Gender</TableHead>
+              <TableHead className={dataTableHeadClassName}>Condition</TableHead>
+              <TableHead className={`${dataTableHeadClassName} hidden md:table-cell`}>Doctor</TableHead>
+              <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Phone</TableHead>
+              <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Created</TableHead>
+              {canMutate && <TableHead className={`${dataTableHeadClassName} w-12`} />}
             </TableRow>
           </TableHeader>
           <TableBody>
             {patients.map((patient) => (
-              <TableRow key={patient._id}>
-                <TableCell className="font-medium">{patient.name}</TableCell>
-                <TableCell className="hidden sm:table-cell">{patient.age || '-'}</TableCell>
-                <TableCell className="hidden sm:table-cell">
+              <TableRow key={patient._id} className={dataTableBodyRowClassName}>
+                <TableCell className={`${dataTableCellClassName} font-medium text-foreground`}>
+                  {patient.name}
+                </TableCell>
+                <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground sm:table-cell`}>
+                  {patient.age ?? '—'}
+                </TableCell>
+                <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}>
                   {patient.gender ? (
-                    <Badge variant="outline">{patient.gender}</Badge>
+                    <Badge variant="outline" className="font-normal">
+                      {patient.gender}
+                    </Badge>
                   ) : (
-                    '-'
+                    <span className="text-muted-foreground">—</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{patient.condition}</Badge>
+                <TableCell className={dataTableCellClassName}>
+                  <Badge variant="secondary" className={dataTableHighlightBadgeClassName}>
+                    {patient.condition}
+                  </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {patient.doctor?.name || '-'}
+                <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground md:table-cell`}>
+                  {patient.doctor?.name || '—'}
                 </TableCell>
-                <TableCell className="hidden lg:table-cell">{patient.phone || '-'}</TableCell>
-                <TableCell className="hidden lg:table-cell">
+                <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground lg:table-cell`}>
+                  {patient.phone || '—'}
+                </TableCell>
+                <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground lg:table-cell`}>
                   {format(new Date(patient.createdAt), 'MMM d, yyyy')}
                 </TableCell>
                 {canMutate && onEdit && onDelete && (
-                  <TableCell>
+                  <TableCell className={dataTableCellClassName}>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent">
-                        <MoreHorizontal className="h-4 w-4" />
+                      <DropdownMenuTrigger className={dataTableActionsTriggerClassName}>
+                        <MoreHorizontal className="size-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onEdit(patient)}>
-                          <Pencil className="mr-2 h-4 w-4" />
+                          <Pencil className="mr-2 size-4" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setDeleteId(patient._id)}
                           className="text-destructive focus:text-destructive"
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className="mr-2 size-4" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -160,36 +191,35 @@ export function PatientTable({
               </TableRow>
             ))}
           </TableBody>
-        </Table>
-      </div>
+      </DataTable>
 
       {canMutate && onDelete && (
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Patient</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this patient? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (deleteId) {
-                  onDelete(deleteId);
-                  setDeleteId(null);
-                }
-              }}
-              className="bg-destructive hover:bg-destructive/90"
-              loading={isDeleting}
-              loadingText="Deleting..."
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Patient</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this patient? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (deleteId) {
+                    onDelete(deleteId);
+                    setDeleteId(null);
+                  }
+                }}
+                className="bg-destructive hover:bg-destructive/90"
+                loading={isDeleting}
+                loadingText="Deleting..."
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </>
   );

@@ -16,13 +16,21 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DataTable,
+  DataTableEmptyState,
+  dataTableBodyRowClassName,
+  dataTableCellClassName,
+  dataTableHeadClassName,
+  dataTableHeaderRowClassName,
+  dataTableHighlightBadgeClassName,
+} from '@/components/ui/data-table-shell';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -207,85 +215,90 @@ export function DoctorDetailView() {
 
         {/* Patients Table */}
         {isLoadingPatients ? (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Age</TableHead>
-                  <TableHead>Gender</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+          <DataTable>
+            <TableHeader>
+              <TableRow className={dataTableHeaderRowClassName}>
+                <TableHead className={dataTableHeadClassName}>Name</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Age</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Gender</TableHead>
+                <TableHead className={dataTableHeadClassName}>Condition</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden md:table-cell`}>Phone</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Created</TableHead>
+                {isAdmin && <TableHead className={`${dataTableHeadClassName} w-12`} />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(3)].map((_, i) => (
+                <TableRow key={i} className={dataTableBodyRowClassName}>
+                  <TableCell className={dataTableCellClassName}><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}><Skeleton className="h-5 w-16" /></TableCell>
+                  <TableCell className={dataTableCellClassName}><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden md:table-cell`}><Skeleton className="h-4 w-28" /></TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden lg:table-cell`}><Skeleton className="h-4 w-20" /></TableCell>
+                  {isAdmin && <TableCell className={dataTableCellClassName}><Skeleton className="size-8 rounded-lg" /></TableCell>}
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[...Array(3)].map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-8" /></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </DataTable>
         ) : patientsData?.patients.length === 0 ? (
-          <div className="rounded-md border">
-            <div className="flex flex-col items-center justify-center py-16">
-              <Users className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No patients found</p>
-            </div>
-          </div>
+          <DataTableEmptyState icon={Users} title="No patients found" />
         ) : (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="hidden sm:table-cell">Age</TableHead>
-                  <TableHead className="hidden sm:table-cell">Gender</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead className="hidden md:table-cell">Phone</TableHead>
-                  <TableHead className="hidden lg:table-cell">Created</TableHead>
-                  {isAdmin && <TableHead className="w-[50px]"></TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {patientsData?.patients.map((patient) => (
-                  <TableRow key={patient._id}>
-                    <TableCell className="font-medium">{patient.name}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{patient.age || '-'}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{patient.gender || '-'}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{patient.condition}</Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">{patient.phone || '-'}</TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      {format(new Date(patient.createdAt), 'MMM d, yyyy')}
-                    </TableCell>
-                    {isAdmin && (
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => setDeletePatientId(patient._id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+          <DataTable>
+            <TableHeader>
+              <TableRow className={dataTableHeaderRowClassName}>
+                <TableHead className={dataTableHeadClassName}>Name</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Age</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden sm:table-cell`}>Gender</TableHead>
+                <TableHead className={dataTableHeadClassName}>Condition</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden md:table-cell`}>Phone</TableHead>
+                <TableHead className={`${dataTableHeadClassName} hidden lg:table-cell`}>Created</TableHead>
+                {isAdmin && <TableHead className={`${dataTableHeadClassName} w-12`} />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {patientsData?.patients.map((patient) => (
+                <TableRow key={patient._id} className={dataTableBodyRowClassName}>
+                  <TableCell className={`${dataTableCellClassName} font-medium text-foreground`}>
+                    {patient.name}
+                  </TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground sm:table-cell`}>
+                    {patient.age ?? '—'}
+                  </TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden sm:table-cell`}>
+                    {patient.gender ? (
+                      <Badge variant="outline" className="font-normal">{patient.gender}</Badge>
+                    ) : (
+                      '—'
                     )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                  </TableCell>
+                  <TableCell className={dataTableCellClassName}>
+                    <Badge variant="secondary" className={dataTableHighlightBadgeClassName}>
+                      {patient.condition}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground md:table-cell`}>
+                    {patient.phone || '—'}
+                  </TableCell>
+                  <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground lg:table-cell`}>
+                    {format(new Date(patient.createdAt), 'MMM d, yyyy')}
+                  </TableCell>
+                  {isAdmin && (
+                    <TableCell className={dataTableCellClassName}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeletePatientId(patient._id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </DataTable>
         )}
 
         {patientsData?.pagination && patientsData.pagination.totalCount > 0 && (
