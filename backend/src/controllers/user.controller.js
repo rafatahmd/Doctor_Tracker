@@ -11,8 +11,6 @@ const serializeUser = (user) => ({
   updatedAt: user.updatedAt
 });
 
-const countAdmins = () => User.countDocuments({ role: ROLES.ADMIN });
-
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Admin
@@ -126,14 +124,11 @@ exports.updateUser = async (req, res, next) => {
     if (name) user.name = name;
 
     if (role !== undefined) {
-      if (user.role === ROLES.ADMIN && role !== ROLES.ADMIN) {
-        const adminCount = await countAdmins();
-        if (adminCount <= 1) {
-          return res.status(400).json({
-            success: false,
-            message: 'Cannot demote the last admin user'
-          });
-        }
+      if (user.role === ROLES.ADMIN) {
+        return res.status(400).json({
+          success: false,
+          message: 'Admin role cannot be changed'
+        });
       }
       user.role = role;
     }
@@ -147,6 +142,45 @@ exports.updateUser = async (req, res, next) => {
     res.json({
       success: true,
       data: { user: serializeUser(user) }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete user (general role only)
+// @route   DELETE /api/users/:id
+// @access  Admin
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (user.role === ROLES.ADMIN) {
+      return res.status(400).json({
+        success: false,
+        message: 'Admin users cannot be deleted'
+      });
+    }
+
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot delete your own account'
+      });
+    }
+
+    await user.deleteOne();
+
+    res.json({
+      success: true,
+      data: { message: 'User deleted successfully' }
     });
   } catch (error) {
     next(error);
