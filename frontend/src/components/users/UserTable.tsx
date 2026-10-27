@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { RoleBadge } from '@/components/users/RoleBadge';
 import {
   DataTable,
   DataTableEmptyState,
@@ -17,11 +17,9 @@ import {
   dataTableCellClassName,
   dataTableHeadClassName,
   dataTableHeaderRowClassName,
-  dataTableHighlightBadgeClassName,
 } from '@/components/ui/data-table-shell';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppUser } from '@/hooks/useUsers';
-import { ROLE_LABELS, ROLES } from '@/lib/roles';
 import { format } from 'date-fns';
 import { UserCog } from 'lucide-react';
 
@@ -102,16 +100,7 @@ export function UserTable({ users, isLoading }: UserTableProps) {
                 {user.email}
               </TableCell>
               <TableCell className={dataTableCellClassName}>
-                <Badge
-                  variant={user.role === ROLES.ADMIN ? 'secondary' : 'outline'}
-                  className={
-                    user.role === ROLES.ADMIN
-                      ? dataTableHighlightBadgeClassName
-                      : 'font-normal'
-                  }
-                >
-                  {ROLE_LABELS[user.role]}
-                </Badge>
+                <RoleBadge role={user.role} />
               </TableCell>
               <TableCell className={`${dataTableCellClassName} hidden text-muted-foreground sm:table-cell`}>
                 {format(new Date(user.createdAt), 'MMM d, yyyy')}

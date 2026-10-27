@@ -6,7 +6,7 @@ import { useUser, useUpdateUser, useDeleteUser, UserFormData } from '@/hooks/use
 import { UserForm } from '@/components/users/UserForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { RoleBadge } from '@/components/users/RoleBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   AlertDialog,
@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ROLE_LABELS, ROLES } from '@/lib/roles';
+import { ROLES } from '@/lib/roles';
 import { format } from 'date-fns';
 import { ArrowLeft, AlertCircle, Mail, User as UserIcon, Shield, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -115,9 +115,7 @@ export function UserDetailView() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-xl">{user.name}</CardTitle>
-            <Badge variant={user.role === ROLES.ADMIN ? 'default' : 'secondary'}>
-              {ROLE_LABELS[user.role]}
-            </Badge>
+            <RoleBadge role={user.role} />
           </div>
         </CardHeader>
         <CardContent>
@@ -137,7 +135,7 @@ export function UserDetailView() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Role</p>
-                <p className="font-medium">{ROLE_LABELS[user.role]}</p>
+                <RoleBadge role={user.role} className="mt-1" />
               </div>
             </div>
             <div className="flex items-center gap-3">
