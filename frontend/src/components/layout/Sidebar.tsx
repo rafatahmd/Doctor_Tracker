@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { TopbarShell } from '@/components/layout/Header';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 const baseNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -131,6 +132,7 @@ export function Sidebar() {
             <p className="truncate text-xs text-sidebar-foreground/55">{user?.email}</p>
           </div>
         </div>
+        <ThemeToggle variant="sidebar" className="mb-1" />
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-red-300"
@@ -166,7 +168,9 @@ export function Sidebar() {
               </span>
             </div>
           </div>
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className="lg:hidden" />
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger>
               <span className="inline-flex size-10 items-center justify-center rounded-xl border border-primary/15 bg-white/60 text-foreground shadow-xs transition-colors hover:bg-primary/5 dark:bg-background/40">
                 {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -178,6 +182,7 @@ export function Sidebar() {
               </SidebarShell>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </TopbarShell>
     </>

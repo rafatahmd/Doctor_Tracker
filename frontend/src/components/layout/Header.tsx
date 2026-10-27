@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -92,19 +93,22 @@ export function Header() {
   return (
     <header className="sticky top-[4.25rem] z-40 lg:top-0">
       <TopbarShell>
-        <div className="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-          <div
-            className="pointer-events-none absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent sm:inset-x-6 lg:inset-x-8"
-            aria-hidden
-          />
-          {description && (
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary/80">
-              {description}
-            </p>
-          )}
-          <h1 className="mt-0.5 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-            {getTitle()}
-          </h1>
+        <div className="relative flex items-start justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="min-w-0">
+            <div
+              className="pointer-events-none absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent sm:inset-x-6 lg:inset-x-8"
+              aria-hidden
+            />
+            {description && (
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-primary/80">
+                {description}
+              </p>
+            )}
+            <h1 className="mt-0.5 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              {getTitle()}
+            </h1>
+          </div>
+          <ThemeToggle className="hidden lg:inline-flex" />
         </div>
       </TopbarShell>
     </header>

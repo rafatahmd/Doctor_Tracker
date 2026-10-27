@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface AuthPageShellProps {
   title: string;
@@ -34,6 +35,10 @@ export function AuthPageShell({
         className="pointer-events-none absolute -right-24 bottom-1/4 h-80 w-80 rounded-full bg-chart-2/15 blur-3xl"
         aria-hidden
       />
+
+      <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
 
       <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <Link
