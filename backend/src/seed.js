@@ -136,13 +136,7 @@ const seedDatabase = async () => {
     }
     console.log(`Created ${patients.length} patients`);
 
-    console.log("\n=================================");
-    console.log("Database seeded successfully!");
-    console.log("=================================");
-    console.log("\nDemo Login Credentials:");
-    console.log("Email: admin@example.com");
-    console.log("Password: password123");
-    console.log("=================================\n");
+    console.log("\nDatabase seeded successfully.\n");
 
     process.exit(0);
   } catch (error) {

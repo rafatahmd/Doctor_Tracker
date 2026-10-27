@@ -132,15 +132,21 @@ npm run dev
 
 > **macOS note:** Port 5000 is often used by AirPlay Receiver and returns HTTP 403. This project defaults to **5001** instead.
 
-**Demo Credentials** (after running seed):
-- Email: `admin@example.com`
-- Password: `password123`
+After seeding, sign in with the admin account created in your database, or use **Register** to create a new user.
 
 ## Deployment
 
-- **Backend (`backend/`):** Node host (e.g. [Render](https://render.com)) — set `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`, `NODE_ENV=production`
-- **Frontend (`frontend/`):** [Vercel](https://vercel.com) or similar — set `NEXT_PUBLIC_API_URL` to your API base (e.g. `https://your-api.onrender.com/api`)
-- Point backend `CLIENT_URL` at your live frontend URL; run `npm run seed` in `backend/` against Atlas if you want demo data
+Both the API and the Next.js app are deployed on [Vercel](https://vercel.com) as separate projects:
+
+| Project | Root directory | Environment variables |
+|---------|----------------|------------------------|
+| **Backend (API)** | `backend/` | `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`, `NODE_ENV=production` |
+| **Frontend** | `frontend/` | `NEXT_PUBLIC_API_URL` → your backend URL including `/api` (e.g. `https://your-api.vercel.app/api`) |
+
+1. Deploy **backend** first; copy its production URL.
+2. Deploy **frontend** with `NEXT_PUBLIC_API_URL` pointing at that API.
+3. Set backend `CLIENT_URL` to your frontend’s production URL (for CORS).
+4. Optionally run `npm run seed` locally with `MONGODB_URI` set to your Atlas cluster to load sample data.
 
 ## API Endpoints
 
