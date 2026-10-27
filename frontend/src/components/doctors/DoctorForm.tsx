@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { PHONE_PLACEHOLDER, isOptionalEmailValid } from '@/lib/form-constants';
+import { PHONE_PLACEHOLDER, isOptionalEmailValid } from '@/lib/utils';
 import { Doctor, DoctorFormData } from '@/hooks/useDoctors';
 
 const doctorSchema = z.object({
