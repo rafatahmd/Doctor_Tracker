@@ -30,6 +30,8 @@ const doctorSchema = z.object({
     ),
 });
 
+type DoctorFormValues = z.infer<typeof doctorSchema>;
+
 interface DoctorFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -50,7 +52,7 @@ export function DoctorForm({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<DoctorFormData>({
+  } = useForm<DoctorFormValues>({
     resolver: zodResolver(doctorSchema),
     defaultValues: {
       name: '',
@@ -84,7 +86,7 @@ export function DoctorForm({
     }
   }, [open, doctor, reset]);
 
-  const handleFormSubmit = async (data: z.infer<typeof doctorSchema>) => {
+  const handleFormSubmit = async (data: DoctorFormValues) => {
     const payload: DoctorFormData = {
       name: data.name,
       specialization: data.specialization,
