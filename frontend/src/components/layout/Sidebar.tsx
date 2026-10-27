@@ -7,6 +7,7 @@ import {
   LayoutDashboard, 
   Stethoscope, 
   Users, 
+  UserCog,
   LogOut,
   Menu,
   X
@@ -16,14 +17,18 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const navItems = [
+const baseNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/doctors', label: 'Doctors', icon: Stethoscope },
   { href: '/patients', label: 'Patients', icon: Users },
+  { href: '/users', label: 'Users', icon: UserCog, adminOnly: true },
 ];
 
 function NavLinks({ onItemClick }: { onItemClick?: () => void }) {
   const pathname = usePathname();
+  const { isAdmin } = useAuth();
+
+  const navItems = baseNavItems.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <nav className="flex-1 space-y-1 px-3 py-4">

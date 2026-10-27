@@ -36,9 +36,10 @@ import { useState } from 'react';
 interface DoctorTableProps {
   doctors: Doctor[];
   isLoading: boolean;
-  onEdit: (doctor: Doctor) => void;
-  onDelete: (id: string) => void;
+  onEdit?: (doctor: Doctor) => void;
+  onDelete?: (id: string) => void;
   isDeleting?: boolean;
+  canMutate?: boolean;
 }
 
 export function DoctorTable({
@@ -47,6 +48,7 @@ export function DoctorTable({
   onEdit,
   onDelete,
   isDeleting,
+  canMutate = true,
 }: DoctorTableProps) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -64,7 +66,7 @@ export function DoctorTable({
               <TableHead className="hidden lg:table-cell">Email</TableHead>
               <TableHead className="text-center">Patients</TableHead>
               <TableHead className="hidden sm:table-cell">Created</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              {canMutate && <TableHead className="w-[50px]"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,7 +79,7 @@ export function DoctorTable({
                 <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-40" /></TableCell>
                 <TableCell className="text-center"><Skeleton className="h-5 w-8 mx-auto" /></TableCell>
                 <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-20" /></TableCell>
-                <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                {canMutate && <TableCell><Skeleton className="h-8 w-8" /></TableCell>}
               </TableRow>
             ))}
           </TableBody>
@@ -110,7 +112,7 @@ export function DoctorTable({
               <TableHead className="hidden h-11 text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:table-cell">Email</TableHead>
               <TableHead className="h-11 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">Patients</TableHead>
               <TableHead className="hidden h-11 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:table-cell">Created</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              {canMutate && <TableHead className="w-[50px]"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -135,52 +137,55 @@ export function DoctorTable({
                 <TableCell className="hidden sm:table-cell">
                   {format(new Date(doctor.createdAt), 'MMM d, yyyy')}
                 </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/doctors/${doctor._id}`);
-                        }}
+                {canMutate && onEdit && onDelete && (
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent"
                       >
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(doctor);
-                        }}
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeleteId(doctor._id);
-                        }}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/doctors/${doctor._id}`);
+                          }}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(doctor);
+                          }}
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteId(doctor._id);
+                          }}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
 
+      {canMutate && onDelete && (
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -207,6 +212,7 @@ export function DoctorTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      )}
     </>
   );
 }

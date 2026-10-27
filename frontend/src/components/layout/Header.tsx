@@ -6,6 +6,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/doctors': 'Doctors',
   '/patients': 'Patients',
+  '/users': 'Users',
 };
 
 export function Header() {
@@ -15,6 +16,9 @@ export function Header() {
   const getTitle = () => {
     if (pathname.startsWith('/doctors/') && pathname !== '/doctors') {
       return 'Doctor Details';
+    }
+    if (pathname.startsWith('/users/') && pathname !== '/users') {
+      return 'User Details';
     }
     return pageTitles[pathname] || 'Doctor Tracker';
   };

@@ -1,0 +1,10 @@
+{
+  "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
+  "/(protected)/doctors/[id]/page": "app/(protected)/doctors/[id]/page.js",
+  "/(protected)/doctors/page": "app/(protected)/doctors/page.js",
+  "/(protected)/patients/page": "app/(protected)/patients/page.js",
+  "/(protected)/users/page": "app/(protected)/users/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/register/page": "app/register/page.js"
+}

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { DoctorFilters } from '@/components/doctors/DoctorFilters';
-import { DoctorTable } from '@/components/doctors/DoctorTable';
-import { DoctorForm } from '@/components/doctors/DoctorForm';
-import { DataPagination } from '@/components/ui/data-pagination';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { DoctorFilters } from "@/components/doctors/DoctorFilters";
+import { DoctorTable } from "@/components/doctors/DoctorTable";
+import { DoctorForm } from "@/components/doctors/DoctorForm";
+import { DataPagination } from "@/components/ui/data-pagination";
 import {
   useDoctors,
   useCreateDoctor,
@@ -14,13 +14,18 @@ import {
   Doctor,
   DoctorFilters as DoctorFiltersType,
   DoctorFormData,
-} from '@/hooks/useDoctors';
-import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import { PageHeader } from '@/components/ui/page-header';
+} from "@/hooks/useDoctors";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { PageHeader } from "@/components/ui/page-header";
+import { useAuth } from "@/context/AuthContext";
 
 export function DoctorsView() {
-  const [filters, setFilters] = useState<DoctorFiltersType>({ page: 1, limit: 10 });
+  const { isAdmin } = useAuth();
+  const [filters, setFilters] = useState<DoctorFiltersType>({
+    page: 1,
+    limit: 10,
+  });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
 
@@ -32,17 +37,20 @@ export function DoctorsView() {
   const handleSubmit = async (formData: DoctorFormData) => {
     try {
       if (editingDoctor) {
-        await updateDoctor.mutateAsync({ id: editingDoctor._id, data: formData });
-        toast.success('Doctor updated successfully');
+        await updateDoctor.mutateAsync({
+          id: editingDoctor._id,
+          data: formData,
+        });
+        toast.success("Doctor updated successfully");
       } else {
         await createDoctor.mutateAsync(formData);
-        toast.success('Doctor created successfully');
+        toast.success("Doctor created successfully");
       }
       setIsFormOpen(false);
       setEditingDoctor(null);
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || 'Something went wrong');
+      toast.error(err.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -54,10 +62,10 @@ export function DoctorsView() {
   const handleDelete = async (id: string) => {
     try {
       await deleteDoctor.mutateAsync(id);
-      toast.success('Doctor deleted successfully');
+      toast.success("Doctor deleted successfully");
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || 'Failed to delete doctor');
+      toast.error(err.response?.data?.message || "Failed to delete doctor");
     }
   };
 
@@ -71,10 +79,16 @@ export function DoctorsView() {
         title="Manage doctors"
         description="Search, filter, and maintain doctor records across your organization."
         action={
-          <Button size="default" className="shadow-sm px-5" onClick={() => setIsFormOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Doctor
-          </Button>
+          isAdmin ? (
+            <Button
+              size="default"
+              className="shadow-sm px-5"
+              onClick={() => setIsFormOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add doctor
+            </Button>
+          ) : undefined
         }
       />
 
@@ -83,8 +97,9 @@ export function DoctorsView() {
       <DoctorTable
         doctors={data?.doctors || []}
         isLoading={isLoading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        canMutate={isAdmin}
+        onEdit={isAdmin ? handleEdit : undefined}
+        onDelete={isAdmin ? handleDelete : undefined}
         isDeleting={deleteDoctor.isPending}
       />
 

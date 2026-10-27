@@ -13,7 +13,9 @@ const {
   getSpecializations
 } = require('../controllers/doctor.controller');
 const auth = require('../middleware/auth');
+const authorize = require('../middleware/authorize');
 const validate = require('../middleware/validate');
+const { ROLES } = require('../constants/roles');
 
 // All routes are protected
 router.use(auth);
@@ -94,14 +96,14 @@ const patientIdValidation = [
 // Routes
 router.get('/specializations', getSpecializations);
 router.get('/', getDoctors);
-router.post('/', doctorValidation, validate, createDoctor);
+router.post('/', authorize(ROLES.ADMIN), doctorValidation, validate, createDoctor);
 router.get('/:id', idValidation, validate, getDoctor);
-router.put('/:id', [...idValidation, ...doctorValidation], validate, updateDoctor);
-router.delete('/:id', idValidation, validate, deleteDoctor);
+router.put('/:id', authorize(ROLES.ADMIN), [...idValidation, ...doctorValidation], validate, updateDoctor);
+router.delete('/:id', authorize(ROLES.ADMIN), idValidation, validate, deleteDoctor);
 
 // Nested patient routes
 router.get('/:id/patients', idValidation, validate, getDoctorPatients);
-router.post('/:id/patients', [...idValidation, ...patientValidation], validate, addDoctorPatient);
-router.delete('/:id/patients/:patientId', patientIdValidation, validate, removeDoctorPatient);
+router.post('/:id/patients', authorize(ROLES.ADMIN), [...idValidation, ...patientValidation], validate, addDoctorPatient);
+router.delete('/:id/patients/:patientId', authorize(ROLES.ADMIN), patientIdValidation, validate, removeDoctorPatient);
 
 module.exports = router;
