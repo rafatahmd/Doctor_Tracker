@@ -19,14 +19,10 @@ function DashboardSkeleton() {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="pb-2">
-              <Skeleton className="h-4 w-24" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-16" />
-            </CardContent>
-          </Card>
+          <div key={i} className="rounded-2xl border border-border/80 bg-muted/30 p-5">
+            <Skeleton className="mb-3 h-4 w-28" />
+            <Skeleton className="h-9 w-20" />
+          </div>
         ))}
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
