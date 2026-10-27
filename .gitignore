@@ -17,6 +17,9 @@ dist/
 # Logs & OS
 *.log
 .DS_Store
+
+# Cursor IDE
+.cursor
 .cursor/
 
 # Debug

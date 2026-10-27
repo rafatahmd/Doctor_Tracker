@@ -138,19 +138,9 @@ npm run dev
 
 ## Deployment
 
-Production layout:
-
-- **Backend (Express):** [Render](https://render.com) free Web Service — see [`render.yaml`](render.yaml)
-- **Frontend (Next.js):** [Vercel](https://vercel.com) or [Netlify](https://netlify.com)
-
-Full step-by-step instructions, environment variables, and troubleshooting: **[DEPLOYMENT.md](DEPLOYMENT.md)**
-
-Quick checklist:
-
-1. Deploy `backend/` to Render → set `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`
-2. Deploy `frontend/` to Vercel (root directory: `frontend`) → set `NEXT_PUBLIC_API_URL` to `https://<render-host>/api`
-3. Update Render `CLIENT_URL` with your live frontend URL
-4. Run `npm run seed` against Atlas if you need demo data in production
+- **Backend (`backend/`):** Node host (e.g. [Render](https://render.com)) — set `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`, `NODE_ENV=production`
+- **Frontend (`frontend/`):** [Vercel](https://vercel.com) or similar — set `NEXT_PUBLIC_API_URL` to your API base (e.g. `https://your-api.onrender.com/api`)
+- Point backend `CLIENT_URL` at your live frontend URL; run `npm run seed` in `backend/` against Atlas if you want demo data
 
 ## API Endpoints
 
