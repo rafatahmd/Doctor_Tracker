@@ -225,7 +225,7 @@ export function PatientForm({
                 value={selectedGender}
                 onValueChange={(value) => setValue('gender', value || '')}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger>
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>

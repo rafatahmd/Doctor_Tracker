@@ -21,16 +21,8 @@ const doctorSchema = z.object({
   specialization: z.string().min(1, 'Specialization is required'),
   hospital: z.string().min(1, 'Hospital is required'),
   phone: z.string().min(1, 'Phone is required'),
-  email: z
-    .string()
-    .trim()
-    .refine(
-      (value) => value === '' || z.string().email().safeParse(value).success,
-      'Invalid email address'
-    ),
+  email: z.string().email('Invalid email address'),
 });
-
-type DoctorFormValues = z.infer<typeof doctorSchema>;
 
 interface DoctorFormProps {
   open: boolean;
@@ -52,7 +44,7 @@ export function DoctorForm({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<DoctorFormValues>({
+  } = useForm<DoctorFormData>({
     resolver: zodResolver(doctorSchema),
     defaultValues: {
       name: '',
@@ -72,7 +64,7 @@ export function DoctorForm({
           specialization: doctor.specialization,
           hospital: doctor.hospital,
           phone: doctor.phone,
-          email: doctor.email || '',
+          email: doctor.email,
         });
       } else {
         reset({
@@ -86,17 +78,8 @@ export function DoctorForm({
     }
   }, [open, doctor, reset]);
 
-  const handleFormSubmit = async (data: DoctorFormValues) => {
-    const payload: DoctorFormData = {
-      name: data.name,
-      specialization: data.specialization,
-      hospital: data.hospital,
-      phone: data.phone,
-    };
-    if (data.email.trim()) {
-      payload.email = data.email.trim().toLowerCase();
-    }
-    await onSubmit(payload);
+  const handleFormSubmit = async (data: DoctorFormData) => {
+    await onSubmit(data);
     reset();
   };
 
@@ -150,7 +133,7 @@ export function DoctorForm({
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                placeholder="+880 1718987447"
+                placeholder="+1-555-123-4567"
                 {...register('phone')}
               />
               {errors.phone && (
@@ -159,11 +142,11 @@ export function DoctorForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email (optional)</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="doctor@hospital.com (optional)"
+                placeholder="doctor@hospital.com"
                 {...register('email')}
               />
               {errors.email && (

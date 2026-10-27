@@ -23,15 +23,12 @@ const doctorSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    required: [true, 'Email is required'],
+    unique: true,
     lowercase: true,
     trim: true,
-    validate: {
-      validator(value) {
-        return !value || /^\S+@\S+\.\S+$/.test(value);
-      },
-      message: 'Please enter a valid email',
-    },
-  },
+    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
+  }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
@@ -52,6 +49,6 @@ doctorSchema.index({ name: 'text' });
 // Compound index for filtering and sorting
 doctorSchema.index({ specialization: 1, createdAt: -1 });
 
-doctorSchema.index({ email: 1 }, { unique: true, sparse: true });
+// Index for email is already created by unique: true
 
 module.exports = mongoose.model('Doctor', doctorSchema);

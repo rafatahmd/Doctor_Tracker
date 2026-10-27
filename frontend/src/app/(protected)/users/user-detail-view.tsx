@@ -2,15 +2,25 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useUser, useUpdateUser, UserFormData } from '@/hooks/useUsers';
+import { useUser, useUpdateUser, useDeleteUser, UserFormData } from '@/hooks/useUsers';
 import { UserForm } from '@/components/users/UserForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ROLE_LABELS, ROLES } from '@/lib/roles';
 import { format } from 'date-fns';
-import { ArrowLeft, AlertCircle, Mail, User as UserIcon, Shield } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Mail, User as UserIcon, Shield, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function UserDetailView() {
@@ -19,9 +29,11 @@ export function UserDetailView() {
   const userId = params.id as string;
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { data: user, isLoading, error } = useUser(userId);
   const updateUser = useUpdateUser();
+  const deleteUser = useDeleteUser();
 
   const handleSubmit = async (formData: UserFormData) => {
     try {
@@ -31,6 +43,17 @@ export function UserDetailView() {
     } catch (err: unknown) {
       const apiError = err as { response?: { data?: { message?: string } } };
       toast.error(apiError.response?.data?.message || 'Failed to update user');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteUser.mutateAsync(userId);
+      toast.success('User deleted successfully');
+      router.push('/users');
+    } catch (err: unknown) {
+      const apiError = err as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || 'Failed to delete user');
     }
   };
 
@@ -72,7 +95,19 @@ export function UserDetailView() {
           <ArrowLeft className="h-4 w-4" />
           Back to Users
         </Button>
-        <Button onClick={() => setIsFormOpen(true)}>Edit user</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setIsFormOpen(true)}>Edit user</Button>
+          {user.role === ROLES.GENERAL && (
+            <Button
+              variant="destructive"
+              onClick={() => setDeleteOpen(true)}
+              disabled={deleteUser.isPending}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete user
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card>
@@ -133,6 +168,27 @@ export function UserDetailView() {
         onSubmit={handleSubmit}
         isLoading={updateUser.isPending}
       />
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete user</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete {user.name}? This removes their account permanently and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteUser.isPending}
+            >
+              {deleteUser.isPending ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

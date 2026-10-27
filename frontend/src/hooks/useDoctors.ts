@@ -7,7 +7,7 @@ export interface Doctor {
   specialization: string;
   hospital: string;
   phone: string;
-  email?: string;
+  email: string;
   patientCount?: number;
   createdAt: string;
   updatedAt: string;
@@ -18,7 +18,7 @@ export interface DoctorFormData {
   specialization: string;
   hospital: string;
   phone: string;
-  email?: string;
+  email: string;
 }
 
 export interface DoctorsResponse {

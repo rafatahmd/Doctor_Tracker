@@ -175,7 +175,7 @@ export function DoctorDetailView() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{doctor.email || '—'}</p>
+                <p className="font-medium">{doctor.email}</p>
               </div>
             </div>
           </div>
