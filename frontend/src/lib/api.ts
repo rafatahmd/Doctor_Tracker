@@ -23,11 +23,19 @@ api.interceptors.request.use(
   }
 );
 
+function isPublicAuthRequest(url: string | undefined): boolean {
+  if (!url) return false;
+  return url.includes('/auth/login') || url.includes('/auth/register');
+}
+
 // Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const requestUrl = error.config?.url as string | undefined;
+
+    if (status === 401 && !isPublicAuthRequest(requestUrl)) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');

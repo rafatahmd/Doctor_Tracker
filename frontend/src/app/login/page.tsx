@@ -8,36 +8,25 @@ import { AuthPageShell } from '@/components/auth/AuthPageShell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { getApiErrorMessage } from '@/lib/utils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setIsLoading(true);
 
     try {
       await login(email.trim().toLowerCase(), password);
       router.push('/dashboard');
     } catch (err: unknown) {
-      const error = err as {
-        response?: { data?: { message?: string }; status?: number };
-        code?: string;
-        message?: string;
-      };
-      if (!error.response) {
-        setError(
-          'Cannot reach the API. Start the backend (npm run dev in backend/) and check NEXT_PUBLIC_API_URL.'
-        );
-        return;
-      }
-      setError(error.response?.data?.message || 'Invalid credentials');
+      toast.error(getApiErrorMessage(err, 'Unable to sign in. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -57,14 +46,6 @@ export default function LoginPage() {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <div
-            role="alert"
-            className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
-          >
-            {error}
-          </div>
-        )}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
