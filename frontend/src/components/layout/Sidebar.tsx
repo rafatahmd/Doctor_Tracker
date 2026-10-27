@@ -1,16 +1,17 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  LayoutDashboard, 
-  Stethoscope, 
-  Users, 
+import {
+  LayoutDashboard,
+  Stethoscope,
+  Users,
   UserCog,
   LogOut,
   Menu,
-  X
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -31,22 +32,35 @@ function NavLinks({ onItemClick }: { onItemClick?: () => void }) {
   const navItems = baseNavItems.filter((item) => !item.adminOnly || isAdmin);
 
   return (
-    <nav className="flex-1 space-y-1 px-3 py-4">
+    <nav className="flex-1 space-y-1 px-3 py-2">
+      <p className="px-3 pb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-sidebar-foreground/45">
+        Menu
+      </p>
       {navItems.map((item) => {
-        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const isActive =
+          pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
           <Link
             key={item.href}
             href={item.href}
             onClick={onItemClick}
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+              'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
               isActive
-                ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-black/25'
+                : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
             )}
           >
-            <item.icon className="h-5 w-5" />
+            <span
+              className={cn(
+                'flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors',
+                isActive
+                  ? 'bg-white/15'
+                  : 'bg-sidebar-accent/80 group-hover:bg-sidebar-accent'
+              )}
+            >
+              <item.icon className="size-4" />
+            </span>
             {item.label}
           </Link>
         );
@@ -55,71 +69,104 @@ function NavLinks({ onItemClick }: { onItemClick?: () => void }) {
   );
 }
 
+function SidebarShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'relative flex h-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground',
+        className
+      )}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sidebar-primary/15 via-transparent to-sidebar-primary/5"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-16 top-0 h-48 w-48 rounded-full bg-sidebar-primary/20 blur-3xl"
+        aria-hidden
+      />
+      <div className="relative flex min-h-0 flex-1 flex-col">{children}</div>
+    </div>
+  );
+}
+
 export function Sidebar() {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const SidebarContent = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-6 py-5 border-b">
-        <div className="p-2 bg-primary/10 rounded-lg">
-          <Stethoscope className="h-6 w-6 text-primary" />
+    <>
+      <div className="border-b border-sidebar-border px-5 py-6">
+        <div className="flex items-center gap-3">
+          <div className="flex size-11 items-center justify-center rounded-xl bg-sidebar-primary/20 ring-1 ring-sidebar-primary/35">
+            <Stethoscope className="size-6 text-sidebar-primary" />
+          </div>
+          <div>
+            <span className="block text-lg font-bold tracking-tight text-sidebar-foreground">
+              Doctor Tracker
+            </span>
+            <span className="text-xs text-sidebar-foreground/50">Admin workspace</span>
+          </div>
         </div>
-        <span className="font-bold text-lg">Doctor Tracker</span>
       </div>
 
-      {/* Navigation */}
       <NavLinks onItemClick={onItemClick} />
 
-      {/* User section */}
-      <div className="border-t p-4">
-        <div className="flex items-center gap-3 px-3 py-2 mb-2">
-          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-sm font-medium text-primary">
-              {user?.name?.charAt(0).toUpperCase()}
-            </span>
+      <div className="mt-auto border-t border-sidebar-border p-4">
+        <div className="mb-3 flex items-center gap-3 rounded-xl bg-sidebar-accent/60 px-3 py-3 ring-1 ring-sidebar-border/80">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/25 text-sm font-semibold text-sidebar-primary-foreground ring-2 ring-sidebar-primary/30">
+            {user?.name?.charAt(0).toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-sidebar-foreground">
+              {user?.name}
+            </p>
+            <p className="truncate text-xs text-sidebar-foreground/55">{user?.email}</p>
           </div>
         </div>
         <Button
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-destructive"
+          className="w-full justify-start text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-red-300"
           onClick={logout}
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="mr-2 size-4" />
           Sign Out
         </Button>
       </div>
-    </div>
+    </>
   );
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-card border-r">
-        <SidebarContent />
+      <aside className="fixed inset-y-0 hidden w-64 flex-col border-r border-sidebar-border shadow-[4px_0_32px_-8px_rgba(0,0,0,0.35)] lg:flex">
+        <SidebarShell>
+          <SidebarContent />
+        </SidebarShell>
       </aside>
 
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-primary/10 rounded-lg">
-            <Stethoscope className="h-5 w-5 text-primary" />
+      <div className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary/20 ring-1 ring-sidebar-primary/30">
+            <Stethoscope className="size-5 text-sidebar-primary" />
           </div>
-          <span className="font-bold">Doctor Tracker</span>
+          <span className="font-bold tracking-tight">Doctor Tracker</span>
         </div>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger>
-            <span className="inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent">
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span className="inline-flex size-10 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent">
+              {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </span>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <SidebarContent onItemClick={() => setMobileOpen(false)} />
+          <SheetContent side="left" className="w-64 border-sidebar-border bg-sidebar p-0">
+            <SidebarShell className="pt-2">
+              <SidebarContent onItemClick={() => setMobileOpen(false)} />
+            </SidebarShell>
           </SheetContent>
         </Sheet>
       </div>
