@@ -32,7 +32,7 @@ export function TopbarShell({
       className={cn(
         'relative overflow-hidden border-b border-sky-200/50',
         'shadow-[0_4px_24px_-8px_oklch(0.48_0.14_250/0.18)]',
-        'dark:border-border/45 dark:shadow-[0_4px_24px_-8px_oklch(0_0_0/0.45)]',
+        'dark:border-border/45 dark:shadow-[0_2px_16px_-6px_oklch(0_0_0/0.35)]',
         className
       )}
     >
@@ -41,7 +41,7 @@ export function TopbarShell({
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -left-28 -top-20 h-52 w-72 rounded-full bg-sky-400/25 blur-3xl dark:bg-primary/20"
+        className="pointer-events-none absolute -left-28 -top-20 h-52 w-72 rounded-full bg-sky-400/25 blur-3xl dark:bg-primary/8"
         aria-hidden
       />
       <div
@@ -49,7 +49,7 @@ export function TopbarShell({
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-40%,oklch(0.58_0.14_250/0.14),transparent_60%)] dark:bg-[radial-gradient(ellipse_90%_70%_at_50%_-40%,oklch(0.55_0.14_250/0.22),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-40%,oklch(0.58_0.14_250/0.14),transparent_60%)] dark:bg-[radial-gradient(ellipse_90%_70%_at_50%_-40%,oklch(0.45_0.1_250/0.08),transparent_55%)]"
         aria-hidden
       />
       <div
