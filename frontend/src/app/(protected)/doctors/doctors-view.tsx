@@ -74,7 +74,7 @@ export function DoctorsView() {
         description="Search, filter, and maintain doctor records across your organization."
         action={
           isAdmin ? (
-            <Button size="default" className="shadow-sm" onClick={() => setIsFormOpen(true)}>
+            <Button size="default" onClick={() => setIsFormOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Doctor
             </Button>

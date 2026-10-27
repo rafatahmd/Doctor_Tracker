@@ -50,7 +50,7 @@ export function UsersView() {
         title="Manage users"
         description="View and manage application accounts and roles."
         action={
-          <Button size="default" className="shadow-sm" onClick={() => setIsFormOpen(true)}>
+          <Button size="default" onClick={() => setIsFormOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add User
           </Button>

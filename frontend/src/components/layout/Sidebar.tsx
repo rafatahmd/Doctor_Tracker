@@ -17,6 +17,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { TopbarShell } from '@/components/layout/Header';
 
 const baseNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -150,26 +151,35 @@ export function Sidebar() {
         </SidebarShell>
       </aside>
 
-      <div className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary/20 ring-1 ring-sidebar-primary/30">
-            <Stethoscope className="size-5 text-sidebar-primary" />
+      <TopbarShell className="fixed left-0 right-0 top-0 z-50 lg:hidden">
+        <div className="flex items-center justify-between px-4 py-3 text-foreground">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20 shadow-xs">
+              <Stethoscope className="size-5 text-primary" />
+            </div>
+            <div>
+              <span className="block text-sm font-bold leading-tight tracking-tight">
+                Doctor Tracker
+              </span>
+              <span className="text-[0.65rem] font-medium text-muted-foreground">
+                Healthcare admin
+              </span>
+            </div>
           </div>
-          <span className="font-bold tracking-tight">Doctor Tracker</span>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger>
+              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-primary/15 bg-white/60 text-foreground shadow-xs transition-colors hover:bg-primary/5 dark:bg-background/40">
+                {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+              </span>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 border-sidebar-border bg-sidebar p-0">
+              <SidebarShell className="pt-2">
+                <SidebarContent onItemClick={() => setMobileOpen(false)} />
+              </SidebarShell>
+            </SheetContent>
+          </Sheet>
         </div>
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger>
-            <span className="inline-flex size-10 items-center justify-center rounded-lg text-sidebar-foreground hover:bg-sidebar-accent">
-              {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-            </span>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-64 border-sidebar-border bg-sidebar p-0">
-            <SidebarShell className="pt-2">
-              <SidebarContent onItemClick={() => setMobileOpen(false)} />
-            </SidebarShell>
-          </SheetContent>
-        </Sheet>
-      </div>
+      </TopbarShell>
     </>
   );
 }
