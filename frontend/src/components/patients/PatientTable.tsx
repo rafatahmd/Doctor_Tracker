@@ -35,9 +35,10 @@ import { useState } from 'react';
 interface PatientTableProps {
   patients: Patient[];
   isLoading: boolean;
-  onEdit: (patient: Patient) => void;
-  onDelete: (id: string) => void;
+  onEdit?: (patient: Patient) => void;
+  onDelete?: (id: string) => void;
   isDeleting?: boolean;
+  canMutate?: boolean;
 }
 
 export function PatientTable({
@@ -46,6 +47,7 @@ export function PatientTable({
   onEdit,
   onDelete,
   isDeleting,
+  canMutate = true,
 }: PatientTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -62,7 +64,7 @@ export function PatientTable({
               <TableHead className="hidden md:table-cell">Doctor</TableHead>
               <TableHead className="hidden lg:table-cell">Phone</TableHead>
               <TableHead className="hidden lg:table-cell">Created</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              {canMutate && <TableHead className="w-[50px]"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,7 +77,7 @@ export function PatientTable({
                 <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-32" /></TableCell>
                 <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-28" /></TableCell>
                 <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-20" /></TableCell>
-                <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                {canMutate && <TableCell><Skeleton className="h-8 w-8" /></TableCell>}
               </TableRow>
             ))}
           </TableBody>
@@ -108,7 +110,7 @@ export function PatientTable({
               <TableHead className="hidden md:table-cell">Doctor</TableHead>
               <TableHead className="hidden lg:table-cell">Phone</TableHead>
               <TableHead className="hidden lg:table-cell">Created</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              {canMutate && <TableHead className="w-[50px]"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,32 +135,35 @@ export function PatientTable({
                 <TableCell className="hidden lg:table-cell">
                   {format(new Date(patient.createdAt), 'MMM d, yyyy')}
                 </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(patient)}>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setDeleteId(patient._id)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                {canMutate && onEdit && onDelete && (
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onEdit(patient)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setDeleteId(patient._id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
 
+      {canMutate && onDelete && (
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -184,6 +189,7 @@ export function PatientTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      )}
     </>
   );
 }

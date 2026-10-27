@@ -9,7 +9,9 @@ const {
   getConditions
 } = require('../controllers/patient.controller');
 const auth = require('../middleware/auth');
+const authorize = require('../middleware/authorize');
 const validate = require('../middleware/validate');
+const { ROLES } = require('../constants/roles');
 
 // All routes are protected
 router.use(auth);
@@ -59,7 +61,7 @@ const idValidation = [
 router.get('/conditions', getConditions);
 router.get('/', getPatients);
 router.get('/:id', idValidation, validate, getPatient);
-router.put('/:id', [...idValidation, ...patientValidation], validate, updatePatient);
-router.delete('/:id', idValidation, validate, deletePatient);
+router.put('/:id', authorize(ROLES.ADMIN), [...idValidation, ...patientValidation], validate, updatePatient);
+router.delete('/:id', authorize(ROLES.ADMIN), idValidation, validate, deletePatient);
 
 module.exports = router;

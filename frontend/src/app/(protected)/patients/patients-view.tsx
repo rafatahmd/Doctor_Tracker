@@ -15,8 +15,10 @@ import {
 } from '@/hooks/usePatients';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import { useAuth } from '@/context/AuthContext';
 
 export function PatientsView() {
+  const { isAdmin } = useAuth();
   const [filters, setFilters] = useState<PatientFiltersType>({ page: 1, limit: 10 });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
@@ -70,8 +72,9 @@ export function PatientsView() {
       <PatientTable
         patients={data?.patients || []}
         isLoading={isLoading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        canMutate={isAdmin}
+        onEdit={isAdmin ? handleEdit : undefined}
+        onDelete={isAdmin ? handleDelete : undefined}
         isDeleting={deletePatient.isPending}
       />
 

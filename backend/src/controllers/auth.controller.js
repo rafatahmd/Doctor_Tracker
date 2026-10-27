@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const serializeUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role
+});
+
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -37,11 +44,7 @@ exports.register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email
-        },
+        user: serializeUser(user),
         token
       }
     });
@@ -83,11 +86,7 @@ exports.login = async (req, res, next) => {
     res.json({
       success: true,
       data: {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email
-        },
+        user: serializeUser(user),
         token
       }
     });
@@ -106,11 +105,7 @@ exports.getMe = async (req, res, next) => {
     res.json({
       success: true,
       data: {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email
-        }
+        user: serializeUser(user)
       }
     });
   } catch (error) {

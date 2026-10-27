@@ -18,8 +18,10 @@ import {
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import { useAuth } from '@/context/AuthContext';
 
 export function DoctorsView() {
+  const { isAdmin } = useAuth();
   const [filters, setFilters] = useState<DoctorFiltersType>({ page: 1, limit: 10 });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
@@ -71,10 +73,12 @@ export function DoctorsView() {
         title="Manage doctors"
         description="Search, filter, and maintain doctor records across your organization."
         action={
-          <Button size="default" className="shadow-sm" onClick={() => setIsFormOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add doctor
-          </Button>
+          isAdmin ? (
+            <Button size="default" className="shadow-sm" onClick={() => setIsFormOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add doctor
+            </Button>
+          ) : undefined
         }
       />
 
@@ -83,8 +87,9 @@ export function DoctorsView() {
       <DoctorTable
         doctors={data?.doctors || []}
         isLoading={isLoading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        canMutate={isAdmin}
+        onEdit={isAdmin ? handleEdit : undefined}
+        onDelete={isAdmin ? handleDelete : undefined}
         isDeleting={deleteDoctor.isPending}
       />
 

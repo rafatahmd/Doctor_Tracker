@@ -48,8 +48,10 @@ import {
   Users,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 export function DoctorDetailView() {
+  const { isAdmin } = useAuth();
   const params = useParams();
   const router = useRouter();
   const doctorId = params.id as string;
@@ -184,10 +186,12 @@ export function DoctorDetailView() {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-lg font-semibold">Patients</h2>
-          <Button onClick={() => setIsFormOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Patient
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => setIsFormOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Patient
+            </Button>
+          )}
         </div>
 
         {/* Search */}
@@ -249,7 +253,7 @@ export function DoctorDetailView() {
                   <TableHead>Condition</TableHead>
                   <TableHead className="hidden md:table-cell">Phone</TableHead>
                   <TableHead className="hidden lg:table-cell">Created</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                  {isAdmin && <TableHead className="w-[50px]"></TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -265,16 +269,18 @@ export function DoctorDetailView() {
                     <TableCell className="hidden lg:table-cell">
                       {format(new Date(patient.createdAt), 'MMM d, yyyy')}
                     </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setDeletePatientId(patient._id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+                    {isAdmin && (
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => setDeletePatientId(patient._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -294,16 +300,17 @@ export function DoctorDetailView() {
         )}
       </div>
 
-      {/* Add Patient Dialog */}
-      <PatientForm
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        doctorId={doctorId}
-        onSubmit={handleAddPatient}
-        isLoading={addPatient.isPending}
-      />
+      {isAdmin && (
+        <PatientForm
+          open={isFormOpen}
+          onOpenChange={setIsFormOpen}
+          doctorId={doctorId}
+          onSubmit={handleAddPatient}
+          isLoading={addPatient.isPending}
+        />
+      )}
 
-      {/* Delete Confirmation */}
+      {isAdmin && (
       <AlertDialog open={!!deletePatientId} onOpenChange={() => setDeletePatientId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -325,6 +332,7 @@ export function DoctorDetailView() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      )}
     </div>
   );
 }
