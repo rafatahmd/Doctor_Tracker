@@ -122,10 +122,13 @@ export function PatientsPerDoctorChart({ data }: { data: ChartData[] }) {
             <Bar
               dataKey="count"
               name="Patients"
-              fill="var(--chart-1)"
               radius={[0, 6, 6, 0]}
               maxBarSize={28}
-            />
+            >
+              {chartData.map((_, index) => (
+                <Cell key={`bar-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
