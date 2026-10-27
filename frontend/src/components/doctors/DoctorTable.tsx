@@ -128,7 +128,7 @@ export function DoctorTable({
                 </TableCell>
                 <TableCell className="hidden md:table-cell">{doctor.hospital}</TableCell>
                 <TableCell className="hidden lg:table-cell">{doctor.phone}</TableCell>
-                <TableCell className="hidden lg:table-cell">{doctor.email}</TableCell>
+                <TableCell className="hidden lg:table-cell">{doctor.email || '—'}</TableCell>
                 <TableCell className="text-center">
                   <Badge variant="outline">{doctor.patientCount || 0}</Badge>
                 </TableCell>

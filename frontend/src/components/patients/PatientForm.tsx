@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,8 +19,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Patient, PatientFormData } from '@/hooks/usePatients';
-import { useDoctors } from '@/hooks/useDoctors';
+import { Doctor, useDoctors } from '@/hooks/useDoctors';
 import { Loader2 } from 'lucide-react';
+
+function getDoctorId(doctor: Patient['doctor'] | undefined): string {
+  if (!doctor) return '';
+  if (typeof doctor === 'string') return doctor;
+  return doctor._id ?? '';
+}
+
+function formatDoctorLabel(doctor: Pick<Doctor, 'name' | 'specialization'>): string {
+  return doctor.specialization ? `${doctor.name} - ${doctor.specialization}` : doctor.name;
+}
 
 interface FormValues {
   name: string;
@@ -83,7 +93,7 @@ export function PatientForm({
           condition: patient.condition,
           phone: patient.phone || '',
           email: patient.email || '',
-          doctor: patient.doctor?._id || '',
+          doctor: getDoctorId(patient.doctor),
         });
       } else {
         reset({
@@ -101,6 +111,28 @@ export function PatientForm({
 
   const selectedGender = watch('gender');
   const selectedDoctor = watch('doctor');
+
+  const doctorOptions = useMemo(() => {
+    const list = [...(doctorsData?.doctors ?? [])];
+    const assigned = patient?.doctor;
+    if (assigned && typeof assigned === 'object' && assigned._id && assigned.name) {
+      if (!list.some((d) => d._id === assigned._id)) {
+        list.unshift({
+          _id: assigned._id,
+          name: assigned.name,
+          specialization: assigned.specialization ?? '',
+          hospital: assigned.hospital ?? '',
+          phone: '',
+          email: '',
+          createdAt: '',
+          updatedAt: '',
+        });
+      }
+    }
+    return list;
+  }, [doctorsData?.doctors, patient?.doctor]);
+
+  const selectedDoctorOption = doctorOptions.find((d) => d._id === selectedDoctor);
 
   const handleFormSubmit = async (data: FormValues) => {
     const cleanData: PatientFormData = {
@@ -245,16 +277,20 @@ export function PatientForm({
             <div className="space-y-2">
               <Label>Assigned Doctor</Label>
               <Select
-                value={selectedDoctor}
+                value={selectedDoctor || undefined}
                 onValueChange={(value) => setValue('doctor', value || '')}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select doctor" />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select doctor">
+                    {selectedDoctorOption
+                      ? formatDoctorLabel(selectedDoctorOption)
+                      : null}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {doctorsData?.doctors.map((doctor) => (
+                  {doctorOptions.map((doctor) => (
                     <SelectItem key={doctor._id} value={doctor._id}>
-                      {doctor.name} - {doctor.specialization}
+                      {formatDoctorLabel(doctor)}
                     </SelectItem>
                   ))}
                 </SelectContent>

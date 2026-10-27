@@ -39,12 +39,11 @@ const doctorValidation = [
     .notEmpty()
     .withMessage('Phone is required'),
   body('email')
+    .optional({ values: 'falsy' })
     .trim()
-    .notEmpty()
-    .withMessage('Email is required')
     .isEmail()
     .withMessage('Please enter a valid email')
-    .normalizeEmail()
+    .normalizeEmail(),
 ];
 
 const patientValidation = [

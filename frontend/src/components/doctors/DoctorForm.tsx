@@ -21,7 +21,13 @@ const doctorSchema = z.object({
   specialization: z.string().min(1, 'Specialization is required'),
   hospital: z.string().min(1, 'Hospital is required'),
   phone: z.string().min(1, 'Phone is required'),
-  email: z.string().email('Invalid email address'),
+  email: z
+    .string()
+    .trim()
+    .refine(
+      (value) => value === '' || z.string().email().safeParse(value).success,
+      'Invalid email address'
+    ),
 });
 
 interface DoctorFormProps {
@@ -64,7 +70,7 @@ export function DoctorForm({
           specialization: doctor.specialization,
           hospital: doctor.hospital,
           phone: doctor.phone,
-          email: doctor.email,
+          email: doctor.email || '',
         });
       } else {
         reset({
@@ -78,8 +84,17 @@ export function DoctorForm({
     }
   }, [open, doctor, reset]);
 
-  const handleFormSubmit = async (data: DoctorFormData) => {
-    await onSubmit(data);
+  const handleFormSubmit = async (data: z.infer<typeof doctorSchema>) => {
+    const payload: DoctorFormData = {
+      name: data.name,
+      specialization: data.specialization,
+      hospital: data.hospital,
+      phone: data.phone,
+    };
+    if (data.email.trim()) {
+      payload.email = data.email.trim().toLowerCase();
+    }
+    await onSubmit(payload);
     reset();
   };
 
@@ -133,7 +148,7 @@ export function DoctorForm({
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                placeholder="+1-555-123-4567"
+                placeholder="+880 1718987447"
                 {...register('phone')}
               />
               {errors.phone && (
@@ -142,11 +157,11 @@ export function DoctorForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email (optional)</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="doctor@hospital.com"
+                placeholder="doctor@hospital.com (optional)"
                 {...register('email')}
               />
               {errors.email && (

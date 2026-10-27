@@ -2,6 +2,15 @@ const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
 const APIFeatures = require('../utils/apiFeatures');
 
+function buildDoctorFields({ name, specialization, hospital, phone, email }) {
+  const fields = { name, specialization, hospital, phone };
+  const trimmedEmail = typeof email === 'string' ? email.trim() : '';
+  if (trimmedEmail) {
+    fields.email = trimmedEmail.toLowerCase();
+  }
+  return fields;
+}
+
 // @desc    Get all doctors with search, filter, pagination
 // @route   GET /api/doctors
 // @access  Private
@@ -66,15 +75,7 @@ exports.getDoctor = async (req, res, next) => {
 // @access  Private
 exports.createDoctor = async (req, res, next) => {
   try {
-    const { name, specialization, hospital, phone, email } = req.body;
-
-    const doctor = await Doctor.create({
-      name,
-      specialization,
-      hospital,
-      phone,
-      email
-    });
+    const doctor = await Doctor.create(buildDoctorFields(req.body));
 
     res.status(201).json({
       success: true,
@@ -90,11 +91,15 @@ exports.createDoctor = async (req, res, next) => {
 // @access  Private
 exports.updateDoctor = async (req, res, next) => {
   try {
-    const { name, specialization, hospital, phone, email } = req.body;
+    const fields = buildDoctorFields(req.body);
+    const update =
+      'email' in fields
+        ? fields
+        : { ...fields, $unset: { email: 1 } };
 
     const doctor = await Doctor.findByIdAndUpdate(
       req.params.id,
-      { name, specialization, hospital, phone, email },
+      update,
       { new: true, runValidators: true }
     ).populate('patientCount');
 
