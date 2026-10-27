@@ -325,9 +325,10 @@ export function DoctorDetailView() {
             <AlertDialogAction
               onClick={() => deletePatientId && handleRemovePatient(deletePatientId)}
               className="bg-destructive hover:bg-destructive/90"
-              disabled={removePatient.isPending}
+              loading={removePatient.isPending}
+              loadingText="Removing..."
             >
-              {removePatient.isPending ? 'Removing...' : 'Remove'}
+              Remove
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

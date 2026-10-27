@@ -28,7 +28,6 @@ import {
 } from '@/components/ui/select';
 import { AppUser, UserFormData } from '@/hooks/useUsers';
 import { ROLE_LABELS, ROLES, UserRole } from '@/lib/roles';
-import { Loader2 } from 'lucide-react';
 
 const createUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50),
@@ -142,9 +141,12 @@ function UserFormFields({
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEdit ? 'Save changes' : 'Create user'}
+        <Button
+          type="submit"
+          loading={isLoading}
+          loadingText={isEdit ? 'Saving...' : 'Creating...'}
+        >
+          {isEdit ? 'Save Changes' : 'Create User'}
         </Button>
       </div>
     </>
@@ -234,7 +236,7 @@ export function UserForm({
         >
           <div className="flex h-full flex-col">
             <SheetHeader className="border-b px-6 py-5 text-left">
-              <SheetTitle className="text-xl">Edit user</SheetTitle>
+              <SheetTitle className="text-xl">Edit User</SheetTitle>
             </SheetHeader>
             <div className="flex-1 overflow-y-auto px-6 py-6">{formBody}</div>
           </div>

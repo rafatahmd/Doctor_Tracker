@@ -205,9 +205,10 @@ export function DoctorTable({
                 }
               }}
               className="bg-destructive hover:bg-destructive/90"
-              disabled={isDeleting}
+              loading={isDeleting}
+              loadingText="Deleting..."
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

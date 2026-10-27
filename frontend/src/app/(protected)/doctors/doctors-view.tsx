@@ -76,7 +76,7 @@ export function DoctorsView() {
           isAdmin ? (
             <Button size="default" className="shadow-sm" onClick={() => setIsFormOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Add doctor
+              Add Doctor
             </Button>
           ) : undefined
         }

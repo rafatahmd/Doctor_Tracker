@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { Patient, PatientFormData } from '@/hooks/usePatients';
 import { Doctor, useDoctors } from '@/hooks/useDoctors';
-import { Loader2 } from 'lucide-react';
 
 function getDoctorId(doctor: Patient['doctor'] | undefined): string {
   if (!doctor) return '';
@@ -306,15 +305,12 @@ export function PatientForm({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {patient ? 'Updating...' : 'Creating...'}
-                </>
-              ) : (
-                patient ? 'Update Patient' : 'Add Patient'
-              )}
+            <Button
+              type="submit"
+              loading={isLoading}
+              loadingText={patient ? 'Updating...' : 'Creating...'}
+            >
+              {patient ? 'Update Patient' : 'Add Patient'}
             </Button>
           </div>
         </form>

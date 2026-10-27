@@ -96,15 +96,16 @@ export function UserDetailView() {
           Back to Users
         </Button>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setIsFormOpen(true)}>Edit user</Button>
+          <Button onClick={() => setIsFormOpen(true)}>Edit User</Button>
           {user.role === ROLES.GENERAL && (
             <Button
               variant="destructive"
               onClick={() => setDeleteOpen(true)}
-              disabled={deleteUser.isPending}
+              loading={deleteUser.isPending}
+              loadingText="Deleting..."
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete user
+              Delete User
             </Button>
           )}
         </div>
@@ -172,7 +173,7 @@ export function UserDetailView() {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete user</AlertDialogTitle>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
             <AlertDialogDescription>
               Delete {user.name}? This removes their account permanently and cannot be undone.
             </AlertDialogDescription>
@@ -182,9 +183,10 @@ export function UserDetailView() {
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive hover:bg-destructive/90"
-              disabled={deleteUser.isPending}
+              loading={deleteUser.isPending}
+              loadingText="Deleting..."
             >
-              {deleteUser.isPending ? 'Deleting...' : 'Delete'}
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

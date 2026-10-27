@@ -14,7 +14,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Doctor, DoctorFormData } from '@/hooks/useDoctors';
-import { Loader2 } from 'lucide-react';
 
 const doctorSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -163,15 +162,12 @@ export function DoctorForm({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {doctor ? 'Updating...' : 'Creating...'}
-                </>
-              ) : (
-                doctor ? 'Update Doctor' : 'Add Doctor'
-              )}
+            <Button
+              type="submit"
+              loading={isLoading}
+              loadingText={doctor ? 'Updating...' : 'Creating...'}
+            >
+              {doctor ? 'Update Doctor' : 'Add Doctor'}
             </Button>
           </div>
         </form>
