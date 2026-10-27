@@ -4,10 +4,10 @@ import api from '@/lib/api';
 export interface Patient {
   _id: string;
   name: string;
-  age?: number;
-  gender?: 'Male' | 'Female' | 'Other';
+  age: number;
+  gender: 'Male' | 'Female' | 'Other';
   condition: string;
-  phone?: string;
+  phone: string;
   email?: string;
   doctor: {
     _id: string;
@@ -21,10 +21,10 @@ export interface Patient {
 
 export interface PatientFormData {
   name: string;
-  age?: number;
-  gender?: 'Male' | 'Female' | 'Other';
+  age: number;
+  gender: 'Male' | 'Female' | 'Other';
   condition: string;
-  phone?: string;
+  phone: string;
   email?: string;
   doctor?: string;
 }

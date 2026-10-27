@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { PHONE_PLACEHOLDER, isOptionalEmailValid } from '@/lib/form-constants';
 import { Doctor, DoctorFormData } from '@/hooks/useDoctors';
 
 const doctorSchema = z.object({
@@ -20,8 +21,12 @@ const doctorSchema = z.object({
   specialization: z.string().min(1, 'Specialization is required'),
   hospital: z.string().min(1, 'Hospital is required'),
   phone: z.string().min(1, 'Phone is required'),
-  email: z.string().email('Invalid email address'),
+  email: z
+    .string()
+    .refine(isOptionalEmailValid, 'Invalid email address'),
 });
+
+type DoctorFormValues = z.infer<typeof doctorSchema>;
 
 interface DoctorFormProps {
   open: boolean;
@@ -43,7 +48,7 @@ export function DoctorForm({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<DoctorFormData>({
+  } = useForm<DoctorFormValues>({
     resolver: zodResolver(doctorSchema),
     defaultValues: {
       name: '',
@@ -54,7 +59,6 @@ export function DoctorForm({
     },
   });
 
-  // Reset form when doctor changes or dialog opens
   useEffect(() => {
     if (open) {
       if (doctor) {
@@ -63,7 +67,7 @@ export function DoctorForm({
           specialization: doctor.specialization,
           hospital: doctor.hospital,
           phone: doctor.phone,
-          email: doctor.email,
+          email: doctor.email || '',
         });
       } else {
         reset({
@@ -77,8 +81,18 @@ export function DoctorForm({
     }
   }, [open, doctor, reset]);
 
-  const handleFormSubmit = async (data: DoctorFormData) => {
-    await onSubmit(data);
+  const handleFormSubmit = async (data: DoctorFormValues) => {
+    const payload: DoctorFormData = {
+      name: data.name,
+      specialization: data.specialization,
+      hospital: data.hospital,
+      phone: data.phone.trim(),
+    };
+    const trimmedEmail = data.email.trim();
+    if (trimmedEmail) {
+      payload.email = trimmedEmail;
+    }
+    await onSubmit(payload);
     reset();
   };
 
@@ -86,18 +100,12 @@ export function DoctorForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {doctor ? 'Edit Doctor' : 'Add New Doctor'}
-          </DialogTitle>
+          <DialogTitle>{doctor ? 'Edit Doctor' : 'Add New Doctor'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              placeholder="Dr. John Doe"
-              {...register('name')}
-            />
+            <Input id="name" placeholder="Dr. John Doe" {...register('name')} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
@@ -105,11 +113,7 @@ export function DoctorForm({
 
           <div className="space-y-2">
             <Label htmlFor="specialization">Specialization</Label>
-            <Input
-              id="specialization"
-              placeholder="Cardiology"
-              {...register('specialization')}
-            />
+            <Input id="specialization" placeholder="Cardiology" {...register('specialization')} />
             {errors.specialization && (
               <p className="text-sm text-destructive">{errors.specialization.message}</p>
             )}
@@ -132,7 +136,7 @@ export function DoctorForm({
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                placeholder="+1-555-123-4567"
+                placeholder={PHONE_PLACEHOLDER}
                 {...register('phone')}
               />
               {errors.phone && (
@@ -141,7 +145,7 @@ export function DoctorForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email (optional)</Label>
               <Input
                 id="email"
                 type="email"
@@ -155,11 +159,7 @@ export function DoctorForm({
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button

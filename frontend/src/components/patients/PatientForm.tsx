@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { PHONE_PLACEHOLDER, isOptionalEmailValid } from '@/lib/form-constants';
 import { Patient, PatientFormData } from '@/hooks/usePatients';
 import { Doctor, useDoctors } from '@/hooks/useDoctors';
 
@@ -81,7 +82,6 @@ export function PatientForm({
     },
   });
 
-  // Reset form when patient changes or dialog opens
   useEffect(() => {
     if (open) {
       if (patient) {
@@ -134,24 +134,16 @@ export function PatientForm({
   const selectedDoctorOption = doctorOptions.find((d) => d._id === selectedDoctor);
 
   const handleFormSubmit = async (data: FormValues) => {
+    const age = parseInt(data.age, 10);
     const cleanData: PatientFormData = {
       name: data.name,
       condition: data.condition,
+      phone: data.phone.trim(),
+      age,
+      gender: data.gender as 'Male' | 'Female' | 'Other',
     };
 
-    if (data.age) {
-      const age = parseInt(data.age, 10);
-      if (!isNaN(age) && age >= 0 && age <= 150) {
-        cleanData.age = age;
-      }
-    }
-
-    if (data.gender && ['Male', 'Female', 'Other'].includes(data.gender)) {
-      cleanData.gender = data.gender as 'Male' | 'Female' | 'Other';
-    }
-
-    if (data.phone) cleanData.phone = data.phone;
-    if (data.email) cleanData.email = data.email;
+    if (data.email.trim()) cleanData.email = data.email.trim();
     if (data.doctor) cleanData.doctor = data.doctor;
 
     await onSubmit(cleanData);
@@ -170,26 +162,32 @@ export function PatientForm({
   };
 
   const validateAge = (value: string) => {
-    if (!value) return true;
+    if (!value?.trim()) return 'Age is required';
     const age = parseInt(value, 10);
     if (isNaN(age) || age < 0 || age > 150) return 'Age must be between 0 and 150';
     return true;
   };
 
-  const validateEmail = (value: string) => {
-    if (!value) return true;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return 'Invalid email address';
+  const validateGender = (value: string) => {
+    if (!value || !['Male', 'Female', 'Other'].includes(value)) {
+      return 'Gender is required';
+    }
     return true;
   };
+
+  const validatePhone = (value: string) => {
+    if (!value?.trim()) return 'Phone is required';
+    return true;
+  };
+
+  const validateEmail = (value: string) =>
+    isOptionalEmailValid(value) ? true : 'Invalid email address';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {patient ? 'Edit Patient' : 'Add New Patient'}
-          </DialogTitle>
+          <DialogTitle>{patient ? 'Edit Patient' : 'Add New Patient'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -220,11 +218,14 @@ export function PatientForm({
 
             <div className="space-y-2">
               <Label>Gender</Label>
+              <input type="hidden" {...register('gender', { validate: validateGender })} />
               <Select
                 value={selectedGender}
-                onValueChange={(value) => setValue('gender', value || '')}
+                onValueChange={(value) =>
+                  setValue('gender', value || '', { shouldValidate: true })
+                }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full" aria-invalid={!!errors.gender}>
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -233,6 +234,9 @@ export function PatientForm({
                   <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.gender && (
+                <p className="text-sm text-destructive">{errors.gender.message}</p>
+              )}
             </div>
           </div>
 
@@ -253,13 +257,16 @@ export function PatientForm({
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
-                placeholder="+1-555-123-4567"
-                {...register('phone')}
+                placeholder={PHONE_PLACEHOLDER}
+                {...register('phone', { validate: validatePhone })}
               />
+              {errors.phone && (
+                <p className="text-sm text-destructive">{errors.phone.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email (optional)</Label>
               <Input
                 id="email"
                 type="email"
@@ -281,9 +288,7 @@ export function PatientForm({
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select doctor">
-                    {selectedDoctorOption
-                      ? formatDoctorLabel(selectedDoctorOption)
-                      : null}
+                    {selectedDoctorOption ? formatDoctorLabel(selectedDoctorOption) : null}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -298,11 +303,7 @@ export function PatientForm({
           )}
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button

@@ -68,13 +68,13 @@ exports.createDoctor = async (req, res, next) => {
   try {
     const { name, specialization, hospital, phone, email } = req.body;
 
-    const doctor = await Doctor.create({
-      name,
-      specialization,
-      hospital,
-      phone,
-      email
-    });
+    const doctorPayload = { name, specialization, hospital, phone };
+    const trimmedEmail = typeof email === 'string' ? email.trim() : '';
+    if (trimmedEmail) {
+      doctorPayload.email = trimmedEmail;
+    }
+
+    const doctor = await Doctor.create(doctorPayload);
 
     res.status(201).json({
       success: true,
@@ -92,9 +92,17 @@ exports.updateDoctor = async (req, res, next) => {
   try {
     const { name, specialization, hospital, phone, email } = req.body;
 
+    const updatePayload = { name, specialization, hospital, phone };
+    const trimmedEmail = typeof email === 'string' ? email.trim() : '';
+    if (trimmedEmail) {
+      updatePayload.email = trimmedEmail;
+    } else {
+      updatePayload.$unset = { email: 1 };
+    }
+
     const doctor = await Doctor.findByIdAndUpdate(
       req.params.id,
-      { name, specialization, hospital, phone, email },
+      updatePayload,
       { new: true, runValidators: true }
     ).populate('patientCount');
 

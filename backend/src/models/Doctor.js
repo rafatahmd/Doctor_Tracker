@@ -23,11 +23,17 @@ const doctorSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
     unique: true,
+    sparse: true,
     lowercase: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
+    validate: {
+      validator(value) {
+        if (!value) return true;
+        return /^\S+@\S+\.\S+$/.test(value);
+      },
+      message: 'Please enter a valid email'
+    }
   }
 }, {
   timestamps: true,

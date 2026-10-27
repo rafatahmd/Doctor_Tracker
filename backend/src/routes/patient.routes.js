@@ -25,11 +25,15 @@ const patientValidation = [
     .isLength({ min: 2, max: 100 })
     .withMessage('Name must be between 2 and 100 characters'),
   body('age')
-    .optional()
+    .notEmpty()
+    .withMessage('Age is required')
     .isInt({ min: 0, max: 150 })
-    .withMessage('Age must be between 0 and 150'),
+    .withMessage('Age must be between 0 and 150')
+    .toInt(),
   body('gender')
-    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Gender is required')
     .isIn(['Male', 'Female', 'Other'])
     .withMessage('Gender must be Male, Female, or Other'),
   body('condition')
@@ -37,10 +41,11 @@ const patientValidation = [
     .notEmpty()
     .withMessage('Condition is required'),
   body('phone')
-    .optional()
-    .trim(),
+    .trim()
+    .notEmpty()
+    .withMessage('Phone is required'),
   body('email')
-    .optional()
+    .optional({ values: 'falsy' })
     .trim()
     .isEmail()
     .withMessage('Please enter a valid email')
