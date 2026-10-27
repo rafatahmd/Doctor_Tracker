@@ -13,10 +13,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { AlertCircle } from 'lucide-react';
+import { scrollablePageClassName } from '@/components/ui/data-table-shell';
+import { cn } from '@/lib/utils';
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className={cn(scrollablePageClassName, 'space-y-6')}>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
           <div key={i} className="rounded-2xl border border-border/80 bg-muted/30 p-5">
@@ -48,19 +50,21 @@ export function DashboardView() {
 
   if (error) {
     return (
+      <div className={scrollablePageClassName}>
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-10">
           <AlertCircle className="h-10 w-10 text-destructive mb-4" />
           <p className="text-muted-foreground">Failed to load dashboard data</p>
         </CardContent>
       </Card>
+      </div>
     );
   }
 
   if (!data) return null;
 
   return (
-    <div className="space-y-6">
+    <div className={cn(scrollablePageClassName, 'space-y-6')}>
       <StatsCards
         totalDoctors={data.summary.totalDoctors}
         totalPatients={data.summary.totalPatients}

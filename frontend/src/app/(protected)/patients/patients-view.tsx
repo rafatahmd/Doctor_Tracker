@@ -15,6 +15,10 @@ import {
 } from '@/hooks/usePatients';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import {
+  listPageLayoutClassName,
+  listPageTableSlotClassName,
+} from '@/components/ui/data-table-shell';
 import { useAuth } from '@/context/AuthContext';
 
 export function PatientsView() {
@@ -61,7 +65,7 @@ export function PatientsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={listPageLayoutClassName}>
       <PageHeader
         title="Manage patients"
         description="Review patient records, conditions, and assigned doctors."
@@ -69,14 +73,16 @@ export function PatientsView() {
 
       <PatientFilters filters={filters} onFiltersChange={setFilters} />
 
-      <PatientTable
-        patients={data?.patients || []}
-        isLoading={isLoading}
-        canMutate={isAdmin}
-        onEdit={isAdmin ? handleEdit : undefined}
-        onDelete={isAdmin ? handleDelete : undefined}
-        isDeleting={deletePatient.isPending}
-      />
+      <div className={listPageTableSlotClassName} data-table-slot>
+        <PatientTable
+          patients={data?.patients || []}
+          isLoading={isLoading}
+          canMutate={isAdmin}
+          onEdit={isAdmin ? handleEdit : undefined}
+          onDelete={isAdmin ? handleDelete : undefined}
+          isDeleting={deletePatient.isPending}
+        />
+      </div>
 
       {data?.pagination && data.pagination.totalCount > 0 && (
         <DataPagination

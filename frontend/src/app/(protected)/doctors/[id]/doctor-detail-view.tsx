@@ -215,7 +215,7 @@ export function DoctorDetailView() {
 
         {/* Patients Table */}
         {isLoadingPatients ? (
-          <DataTable>
+          <DataTable fillHeight={false}>
             <TableHeader>
               <TableRow className={dataTableHeaderRowClassName}>
                 <TableHead className={dataTableHeadClassName}>Name</TableHead>
@@ -244,7 +244,7 @@ export function DoctorDetailView() {
         ) : patientsData?.patients.length === 0 ? (
           <DataTableEmptyState icon={Users} title="No patients found" />
         ) : (
-          <DataTable>
+          <DataTable fillHeight={false}>
             <TableHeader>
               <TableRow className={dataTableHeaderRowClassName}>
                 <TableHead className={dataTableHeadClassName}>Name</TableHead>

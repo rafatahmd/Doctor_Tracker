@@ -6,6 +6,22 @@ import { Table } from '@/components/ui/table';
 export const dataTableShellClassName =
   'overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm ring-1 ring-black/[0.04] dark:bg-card dark:ring-white/[0.06]';
 
+/** Dashboard / detail pages scroll inside main; list pages use table-only scroll. */
+export const scrollablePageClassName =
+  'min-h-0 flex-1 overflow-x-hidden overflow-y-auto';
+
+/** List pages: header, filters, and pagination fixed; table area scrolls. */
+export const listPageLayoutClassName =
+  'flex min-h-0 flex-1 flex-col gap-6 overflow-hidden [&>*:not([data-table-slot])]:shrink-0';
+
+export const listPageTableSlotClassName =
+  'flex min-h-0 flex-1 flex-col overflow-hidden';
+
+const dataTableScrollRegionClassName = cn(
+  'max-h-full min-h-0 overflow-auto overscroll-contain [scrollbar-gutter:stable]',
+  '[&_[data-slot=table-container]]:overflow-visible'
+);
+
 export const dataTableTableClassName = cn(
   'bg-card',
   '[&_[data-slot=table-header]]:bg-muted/25',
@@ -17,7 +33,7 @@ export const dataTableHeaderRowClassName =
   'border-b border-border/80 bg-muted/25 hover:bg-muted/25';
 
 export const dataTableHeadClassName =
-  'h-11 bg-muted/25 px-4 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground first:pl-6 last:pr-6';
+  'sticky top-0 z-10 h-11 bg-muted/95 px-4 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-[inset_0_-1px_0_0_var(--border)] backdrop-blur-sm first:pl-6 last:pr-6';
 
 export const dataTableCellClassName = 'bg-card px-4 py-3.5 align-middle first:pl-6 last:pr-6';
 
@@ -40,17 +56,28 @@ export function DataTableShell({
   );
 }
 
-/** Card shell + table with shared background (matches doctors list). */
+/** Card shell + table; when fillHeight, body scrolls with sticky header (not the page). */
 export function DataTable({
   children,
   className,
+  fillHeight = true,
 }: {
   children: ReactNode;
   className?: string;
+  fillHeight?: boolean;
 }) {
   return (
-    <DataTableShell>
-      <Table className={cn(dataTableTableClassName, className)}>{children}</Table>
+    <DataTableShell
+      className={fillHeight ? 'max-h-full min-h-0 overflow-hidden' : undefined}
+    >
+      <div
+        className={cn(
+          fillHeight && dataTableScrollRegionClassName,
+          !fillHeight && 'overflow-x-auto'
+        )}
+      >
+        <Table className={cn(dataTableTableClassName, className)}>{children}</Table>
+      </div>
     </DataTableShell>
   );
 }

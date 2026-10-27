@@ -18,6 +18,10 @@ import {
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import {
+  listPageLayoutClassName,
+  listPageTableSlotClassName,
+} from '@/components/ui/data-table-shell';
 import { useAuth } from '@/context/AuthContext';
 
 export function DoctorsView() {
@@ -68,7 +72,7 @@ export function DoctorsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={listPageLayoutClassName}>
       <PageHeader
         title="Manage doctors"
         description="Search, filter, and maintain doctor records across your organization."
@@ -84,14 +88,16 @@ export function DoctorsView() {
 
       <DoctorFilters filters={filters} onFiltersChange={setFilters} />
 
-      <DoctorTable
-        doctors={data?.doctors || []}
-        isLoading={isLoading}
-        canMutate={isAdmin}
-        onEdit={isAdmin ? handleEdit : undefined}
-        onDelete={isAdmin ? handleDelete : undefined}
-        isDeleting={deleteDoctor.isPending}
-      />
+      <div className={listPageTableSlotClassName} data-table-slot>
+        <DoctorTable
+          doctors={data?.doctors || []}
+          isLoading={isLoading}
+          canMutate={isAdmin}
+          onEdit={isAdmin ? handleEdit : undefined}
+          onDelete={isAdmin ? handleDelete : undefined}
+          isDeleting={deleteDoctor.isPending}
+        />
+      </div>
 
       {data?.pagination && data.pagination.totalCount > 0 && (
         <DataPagination

@@ -15,6 +15,10 @@ import {
 import { Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import {
+  listPageLayoutClassName,
+  listPageTableSlotClassName,
+} from '@/components/ui/data-table-shell';
 
 export function UsersView() {
   const [filters, setFilters] = useState<UserFilters>({ page: 1, limit: 10 });
@@ -45,7 +49,7 @@ export function UsersView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={listPageLayoutClassName}>
       <PageHeader
         title="Manage users"
         description="View and manage application accounts and roles."
@@ -67,7 +71,9 @@ export function UsersView() {
         />
       </div>
 
-      <UserTable users={data?.users || []} isLoading={isLoading} />
+      <div className={listPageTableSlotClassName} data-table-slot>
+        <UserTable users={data?.users || []} isLoading={isLoading} />
+      </div>
 
       {data?.pagination && data.pagination.totalCount > 0 && (
         <DataPagination
