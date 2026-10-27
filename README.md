@@ -136,6 +136,22 @@ npm run dev
 - Email: `admin@example.com`
 - Password: `password123`
 
+## Deployment
+
+Production layout:
+
+- **Backend (Express):** [Render](https://render.com) free Web Service — see [`render.yaml`](render.yaml)
+- **Frontend (Next.js):** [Vercel](https://vercel.com) or [Netlify](https://netlify.com)
+
+Full step-by-step instructions, environment variables, and troubleshooting: **[DEPLOYMENT.md](DEPLOYMENT.md)**
+
+Quick checklist:
+
+1. Deploy `backend/` to Render → set `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL`
+2. Deploy `frontend/` to Vercel (root directory: `frontend`) → set `NEXT_PUBLIC_API_URL` to `https://<render-host>/api`
+3. Update Render `CLIENT_URL` with your live frontend URL
+4. Run `npm run seed` against Atlas if you need demo data in production
+
 ## API Endpoints
 
 ### Authentication

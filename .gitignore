@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment (never commit secrets)
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# Build / cache
+frontend/.next/
+frontend/out/
+dist/
+*.tsbuildinfo
+
+# Logs & OS
+*.log
+.DS_Store
+.cursor/
+
+# Debug
+npm-debug.log*
