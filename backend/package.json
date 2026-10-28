@@ -7,7 +7,13 @@
     "dev": "nodemon server.js",
     "seed": "node src/seed.js"
   },
-  "keywords": ["doctor", "tracker", "api", "express", "mongodb"],
+  "keywords": [
+    "doctor",
+    "tracker",
+    "api",
+    "express",
+    "mongodb"
+  ],
   "author": "",
   "license": "ISC",
   "description": "Doctor Tracker REST API",
@@ -22,7 +28,8 @@
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.24.7",
-    "morgan": "^1.12.1"
+    "morgan": "^1.12.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

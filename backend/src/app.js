@@ -10,6 +10,7 @@ const patientRoutes = require('./routes/patient.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const userRoutes = require('./routes/user.routes');
 const errorHandler = require('./middleware/errorHandler');
+const { mountSwagger } = require('./config/swagger');
 
 const app = express();
 
@@ -47,6 +48,8 @@ app.use(
 );
 app.use(express.json());
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+mountSwagger(app);
 
 // Routes
 app.use('/api/auth', authRoutes);

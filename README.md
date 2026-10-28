@@ -129,6 +129,7 @@ npm run dev
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5001/api
+- **Swagger UI**: http://localhost:5001/api/docs
 
 > **macOS note:** Port 5000 is often used by AirPlay Receiver and returns HTTP 403. This project defaults to **5001** instead.
 
@@ -140,13 +141,25 @@ Both the API and the Next.js app are deployed on [Vercel](https://vercel.com) as
 
 | Project | Root directory | Environment variables |
 |---------|----------------|------------------------|
-| **Backend (API)** | `backend/` | `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`, `NODE_ENV=production` |
+| **Backend (API)** | `backend/` | `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CLIENT_URL`, `API_PUBLIC_URL`, `NODE_ENV=production` |
 | **Frontend** | `frontend/` | `NEXT_PUBLIC_API_URL` → your backend URL including `/api` (e.g. `https://your-api.vercel.app/api`) |
 
 1. Deploy **backend** first; copy its production URL.
 2. Deploy **frontend** with `NEXT_PUBLIC_API_URL` pointing at that API.
 3. Set backend `CLIENT_URL` to your frontend’s production URL (for CORS).
 4. Optionally run `npm run seed` locally with `MONGODB_URI` set to your Atlas cluster to load sample data.
+
+## API documentation (Swagger UI)
+
+- **Local:** http://localhost:5001/api/docs  
+- **Production:** `https://<your-api>.vercel.app/api/docs`  
+- **OpenAPI JSON:** `/api/docs.json`
+
+1. **POST /api/auth/login** → copy `data.token`  
+2. **Authorize** → paste token  
+3. Try other endpoints  
+
+Set `API_PUBLIC_URL` to your API origin (no `/api` suffix), e.g. `https://doctor-tracker-api.vercel.app`.
 
 ## API Endpoints
 
